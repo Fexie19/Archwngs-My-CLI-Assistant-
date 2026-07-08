@@ -3,6 +3,7 @@
     "type": "function",
     "function": {
       "name": "search_files",
+   
       "description": "Cari file atau folder berdasarkan nama. Gunakan tool ini jika pengguna meminta mencari, menemukan, atau mengecek keberadaan file/folder. Pencarian bersifat case-insensitive (huruf besar dan kecil dianggap sama) dan dapat mencocokkan sebagian nama (partial match). Tool ini hanya membaca data dan tidak mengubah file.",
       "parameters": {
         "type": "object",
@@ -167,7 +168,7 @@
     "type": "function",
     "function": {
       "name": "search_internet",
-      "description": "Cari informasi di internet. Gunakan jika pengguna meminta informasi terbaru atau informasi yang tidak tersedia secara lokal.",
+      "description": "Cari informasi di internet. Gunakan jika pengguna memintai informasi terbaru atau informasi yang tidak tersedia secara lokal.",
       "parameters": {
         "type": "object",
         "properties": {
