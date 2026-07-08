@@ -1,0 +1,216 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "search_files",
+      "description": "Cari file atau folder berdasarkan nama. Gunakan tool ini jika pengguna meminta mencari, menemukan, atau mengecek keberadaan file/folder. Pencarian bersifat case-insensitive (huruf besar dan kecil dianggap sama) dan dapat mencocokkan sebagian nama (partial match). Tool ini hanya membaca data dan tidak mengubah file.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Nama file atau folder yang dicari. Contoh: README.md, laporan, Foto Liburan."
+          },
+          "root_dir": {
+            "type": "string",
+            "description": "Folder awal pencarian. Opsional. Jika tidak diisi, gunakan folder default seperti Home, Documents, dan Downloads."
+          }
+        },
+        "required": ["query"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "read_file",
+      "description": "Baca isi file teks tanpa mengubah file. Gunakan jika pengguna ingin melihat isi file dan path file sudah diketahui.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path lengkap file yang akan dibaca."
+          },
+          "max_chars": {
+            "type": "integer",
+            "description": "Jumlah maksimum karakter yang dibaca. Default 8000."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "open_file",
+      "description": "Buka file atau folder menggunakan aplikasi bawaan sistem operasi. Gunakan jika path file atau folder sudah diketahui.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path lengkap file atau folder yang akan dibuka."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_folder",
+      "description": "Buat folder baru pada lokasi yang diminta pengguna.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path lengkap folder yang akan dibuat."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_file",
+      "description": "Buat file baru. Jika content diberikan, isi file dengan konten tersebut. Jika tidak, buat file kosong.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path lengkap file yang akan dibuat."
+          },
+          "content": {
+            "type": "string",
+            "description": "Isi awal file. Opsional."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "delete_path",
+      "description": "Hapus file atau folder. Jangan gunakan tool ini sampai pengguna memberikan konfirmasi yang jelas untuk menghapus.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path lengkap file atau folder yang akan dihapus."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "edit_file",
+      "description": "Ganti seluruh isi file teks yang sudah ada dengan konten baru.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path lengkap file yang akan diedit."
+          },
+          "content": {
+            "type": "string",
+            "description": "Isi baru yang akan menggantikan seluruh isi file."
+          }
+        },
+        "required": ["path", "content"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "open_app",
+      "description": "Buka aplikasi yang terinstal di komputer. Jika path diberikan, buka file atau folder tersebut menggunakan aplikasi yang dipilih.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "app": {
+            "type": "string",
+            "description": "Nama aplikasi. Contoh: chrome, edge, vscode, notepad, explorer, excel, word."
+          },
+          "path": {
+            "type": "string",
+            "description": "Path file atau folder yang akan dibuka menggunakan aplikasi tersebut. Opsional."
+          }
+        },
+        "required": ["app"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "search_internet",
+      "description": "Cari informasi di internet. Gunakan jika pengguna meminta informasi terbaru atau informasi yang tidak tersedia secara lokal.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Kalimat atau kata kunci pencarian."
+          },
+          "max_results": {
+            "type": "integer",
+            "description": "Jumlah maksimum hasil pencarian. Default 10."
+          }
+        },
+        "required": ["query"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+  "type": "function",
+  "function": {
+    "name": "run_terminal_command",
+    "description": "Jalankan perintah pada Command Prompt (cmd) Windows. Gunakan tool ini hanya jika pengguna secara eksplisit meminta menjalankan perintah terminal, cmd, command prompt, atau shell. Jangan gunakan untuk operasi yang sudah memiliki tool khusus seperti membaca file, mencari file, membuka aplikasi, atau mengedit file.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "Perintah CMD yang akan dijalankan, tanpa awalan 'cmd /c'. Contoh: 'ipconfig', 'dir', 'ping google.com', 'git status'."
+        },
+        "working_directory": {
+          "type": "string",
+          "description": "Direktori kerja sebelum menjalankan perintah. Opsional. Jika kosong, gunakan direktori default."
+        },
+        "wait": {
+          "type": "boolean",
+          "description": "Jika true, tunggu hingga perintah selesai dan kembalikan output. Jika false, jalankan di background. Default true."
+        }
+      },
+      "required": [
+        "command"
+      ],
+      "additionalProperties": false
+        }
+    }
+  }
+]
