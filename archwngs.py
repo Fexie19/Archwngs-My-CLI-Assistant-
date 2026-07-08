@@ -56,47 +56,32 @@ if not API_KEY:
 client = Groq(api_key=API_KEY)
 console = Console() if Console else None
 
-SYSTEM_PROMPT = """Kamu adalah Archwngs, asisten yang sangat setia kepada Dafa Jaya Priyatna (panggilan: Dafa).
-Aku adalah asisten yang selalu patuh dan siap membantu Dafa kapan saja.
-Namaku Archwngs, dan loyalty adalah segalanya.
+SYSTEM_PROMPT = """WAJIB berbahasa Indonesia. Kamu adalah Archwngs, asisten pribadi yang setia dan patuh kepada Dafa Jaya Priyatna (panggilan: Dafa).
 
+Jika konteks/informasi tidak dipahami: gunakan search_internet WAJIB jadi aksi PERTAMA — TANPA teks pembuka apa pun 
+(DILARANG: "tidak mengerti", "maksud Anda apa", "saya akan mencari..."). Jawab hanya setelah hasil pencarian didapat.
+Jangan translate kecuali diminta. Jangan basa-basi: langsung, ringkas, tanpa intro/kesimpulan/saran tambahan. Jelaskan alasan hanya jika diminta. Setelah tools dipakai, laporkan hasil dalam 1-2 kalimat.
+Jika mendeteksi ada bahasa selain Indonesia dan tanpa minta ditranslate, langsung gunakan search_internet.
 
-Perilaku saat menggunakan tools saja:
-- Be concise.
+TOOLS:
+* search_files: cari file/folder; jika ketemu -> otomatis buka file manager (jangan buka jika belum ketemu)
+* read_file: baca isi file teks
+* open_file: buka file/folder dengan app default
+* create_folder / create_file: buat folder/file baru
+* delete_path: hapus file/folder (WAJIB konfirmasi "YA" dulu)
+* edit_file: edit isi file
+* open_app: buka aplikasi (cari di PATH; tidak ada -> error "tidak ditemukan di PATH"; app sudah jalan -> window baru dengan --new-window/-n)
+* search_internet: cari & rangkum dari 5+ sumber berbeda, lalu berikan respon akhir hanya dengan 1 kalimat atau kesimpulan.
 
-- Reply with the minimum information needed.
+ATURAN:
+1. Jangan pernah menebak path, selalu search_files dulu.
+2. Task multi-step: panggil beberapa tools berurutan sesuai kebutuhan.
+3. Utamakan tools daripada asumsi sendiri.
+4. Sertakan path saat kerja dengan file.
+5. Respons akhir: singkat & humoris.
+6. Jangan membuat penjabaran atau list jika user tidak minta untuk DIJELASKAN.
 
-- Do not explain your reasoning unless the user asks.
-
-- Do not add introductions, conclusions, or unnecessary suggestions.
-
-- If a tool is used, briefly state the result in one or two sentences.
-
-
-TOOLS YANG BISA DIGUNAKAN:
-- search_files: Cari file/folder di komputer (setelah ketemu, buka file manager otomatis). JANGAN BUKA FILE/FOLDER JIKA BELUM DITEMUKAN.
-- read_file: Baca isi file teks
-- open_file: Buka file/folder dengan aplikasi default
-- create_folder: Buat folder baru
-- create_file: Buat file baru
-- delete_path: Hapus file/folder (WAJIB KONFIRMASI USER)
-- edit_file: Edit/ganti isi file
-- open_app: Buka aplikasi apapun di komputer
-- search_internet: Cari info di internet
-
-ATURAN PENTING:
-1. HAPUS: Selalu minta konfirmasi "YA" sebelum hapus
-2. BUKA APP: Cari di PATH, jika tidak ada → ERROR "tidak ditemukan di PATH"
-3. BUKA APP BARU: Jika app sudah jalan, buka di NEW WINDOW (--new-window / -n flag)
-4. SEARCH: Setelah ketemu file/folder, buka file manager ke lokasi tersebut
-5. INTERNET: Rangkum dari 5+ sumber berbeda
-6. Bahasa Indonesia, cantumkan path saat kerja file
-7. Selalu patuh kepada Dafa
-8. If the path is unknown, NEVER guess it. Use search_files first.
-9. Complete multi-step tasks by calling multiple tools when necessary.
-10. Prefer using tools over making assumptions.
-
-FORMAT: Bullet (*) untuk list, Number (1.2.3) untuk langkah, **bold** untuk emphasis."""
+FORMAT: * untuk list, 1.2.3 untuk langkah, **bold** untuk penekanan."""
 
 BLOCKED_EXTENSIONS = {".exe", ".bat", ".cmd", ".sh", ".command", ".msi", ".app", ".scr", ".ps1", ".vbs", ".jar", ".dll", ".sys", ".com", ".pif", ".gadget"}
 SKIP_DIR_NAMES = {"Windows", "Program Files", "Program Files (x86)", "ProgramData", "AppData", "$Recycle.Bin", "System Volume Information", "Library", "System", "private", "proc", "sys", "dev", "node_modules", "venv", ".venv", "__pycache__", ".cache", ".git"}
@@ -104,6 +89,8 @@ SKIP_DIR_NAMES = {"Windows", "Program Files", "Program Files (x86)", "ProgramDat
 C_SKIP = "\033[90m"
 C_RESET = "\033[0m"
 C_BOLD = "\033[1m"
+C_ARCH = "\033[38;5;147m"
+C_BASE = "\033[36m"
 
 def p(text, end="\n"):
     sys.stdout.write(str(text) + end)
@@ -141,7 +128,7 @@ def open_in_file_manager(path):
         return False
 
 def print_banner():
-    banner = """
+    banner = """ \033[38;5;147m
     █████╗ ██████╗ ██████╗██╗  ██╗
    ██╔══██╗██╔══██╗██╔════╝██║  ██║
    ███████║██████╔╝██║     ███████║
@@ -157,12 +144,9 @@ def print_banner():
 
           \033[36mArchwngs by fexie
                     
-                    Loyalty is everything.\033[0m
-                           
+                    Loyalty is everything.\033[0m      
 """
-    console.rule(style="sky_blue3")
     sys.stdout.write(banner)
-    console.rule(style="sky_blue3")
     sys.stdout.flush()
 
 def show_banner_and_prompt():
@@ -623,14 +607,13 @@ def search_internet(query, max_results=10):
         return "INFO: Tidak ada hasil pencarian ditemukan."
 
     # Build formatted response
-    response = f"[SEARCH] Hasil Pencarian: {query}\n"
-    response += f"{'='*60}\n\n"
+    response = f"[SEARCH] {query}\n\n"
 
     for i, r in enumerate(results, 1):
-        response += f"{i}. **{r['title']}**\n"
+        response += C_ARCH +f"※ {r['title']}"
         if r.get("body"):
-            response += f"   {r['body'][:200]}...\n" if len(r.get("body", "")) > 200 else f"   {r['body']}\n"
-        response += f"   {C_SKIP}Source: {r['source']} | {r['url']}{C_RESET}\n\n"
+            response += C_BASE + f"   {r['body'][:200]}...\n" if len(r.get("body", "")) > 200 else f"   {r['body']}\n"
+        response += C_BASE + f"   {C_SKIP}Source: {r['source']} | {r['url']}{C_RESET}\n\n"
 
     return response
 
@@ -642,37 +625,37 @@ with open("tools.json", "r", encoding="utf-8") as f:
 def execute_tool(tool_name, tool_input):
     """Execute a tool and return the result."""
     if tool_name == "search_files":
-        p(f"[TOOL] search_files: {tool_input.get('query', '')}")
+        p(f"\n[TOOL] search_files: {tool_input.get('query', '')}")
         result, open_path = search_files(tool_input.get("query", ""), tool_input.get("root_dir"))
         # Auto-open file manager if results found
         if open_path and not result.startswith("ERROR") and not result.startswith("WARNING"):
-            p(f"[TOOL] Membuka file manager di: {open_path}")
+            p(f"\n[TOOL] Membuka file manager di: {open_path}")
             open_in_file_manager(open_path)
         return result
     elif tool_name == "read_file":
-        p(f"[TOOL] read_file: {tool_input.get('path', '')}")
+        p(f"\n[TOOL] read_file: {tool_input.get('path', '')}")
         return read_file(tool_input.get("path", ""), tool_input.get("max_chars", 8000))
     elif tool_name == "open_file":
-        p(f"[TOOL] open_file: {tool_input.get('path', '')}")
+        p(f"\n[TOOL] open_file: {tool_input.get('path', '')}")
         return open_file(tool_input.get("path", ""))
     elif tool_name == "create_folder":
-        p(f"[TOOL] create_folder: {tool_input.get('path', '')}")
+        p(f"\n[TOOL] create_folder: {tool_input.get('path', '')}")
         return create_folder(tool_input.get("path", ""))
     elif tool_name == "create_file":
-        p(f"[TOOL] create_file: {tool_input.get('path', '')}")
+        p(f"\n[TOOL] create_file: {tool_input.get('path', '')}")
         return create_file(tool_input.get("path", ""), tool_input.get("content", ""))
     elif tool_name == "delete_path":
-        p(f"[TOOL] delete_path: {tool_input.get('path', '')}")
+        p(f"\n[TOOL] delete_path: {tool_input.get('path', '')}")
         return delete_path(tool_input.get("path", ""))
     elif tool_name == "edit_file":
-        p(f"[TOOL] edit_file: {tool_input.get('path', '')}")
+        p(f"\n[TOOL] edit_file: {tool_input.get('path', '')}")
         return edit_file(tool_input.get("path", ""), tool_input.get("content", ""))
     elif tool_name == "open_app":
-        p(f"[TOOL] open_app: {tool_input.get('app', '')} (path: {tool_input.get('path', 'none')})")
+        p(f"\n[TOOL] open_app: {tool_input.get('app', '')} (path: {tool_input.get('path', 'none')})")
         result, _ = open_app(tool_input.get("app", ""), tool_input.get("path"))
         return result
     elif tool_name == "search_internet":
-        p(f"[TOOL] search_internet: {tool_input.get('query', '')}")
+        p(f"\n[TOOL] search_internet: {tool_input.get('query', '')}")
         return search_internet(tool_input.get("query", ""), tool_input.get("max_results", 10))
     else:
         return f"ERROR: Tool '{tool_name}' tidak dikenal."
@@ -707,7 +690,7 @@ def agent_loop(messages, history):
         messages.append(assistant_entry)
 
         if msg.content:
-            history.append(f"Archwngs: {msg.content}\n")
+            history.append(f"\n" + C_ARCH + "◉ Archwngs:" + C_RESET + f" {msg.content}\n")
 
         if not msg.tool_calls:
             break
@@ -736,7 +719,7 @@ def main():
             user_input = input("❯ ").strip()
             
         except (EOFError, KeyboardInterrupt):
-            history.append("Archwngs: Sampai jumpa! Aku selalu siap kalau kamu butuh aku lagi.")
+            history.append(f"\n" + C_ARCH + "◉ Archwngs:" + C_RESET + "Sampai jumpa! Aku selalu siap kalau kamu butuh aku lagi.")
             render_transcript(history)
             break
 
@@ -744,12 +727,12 @@ def main():
             continue
 
         if user_input.lower() in ("exit", "quit"):
-            history.append("Archwngs: Sampai jumpa! Aku selalu siap kalau kamu butuh aku lagi.")
+            history.append(f"\n" + C_ARCH + "◉ Archwngs:" + C_RESET + "Sampai jumpa! Aku selalu siap kalau kamu butuh aku lagi.")
             render_transcript(history)
             console.rule(style="sky_blue3")
             break
 
-        history.append(f"Kamu: {user_input}\n")
+        history.append(f"❯ {user_input}\n")
         messages.append({"role": "user", "content": user_input})
 
         try:
@@ -763,3 +746,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
