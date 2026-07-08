@@ -1,2 +1,6 @@
 groq
 rich
+openai
+python-dotenv
+ddgs
+requests
