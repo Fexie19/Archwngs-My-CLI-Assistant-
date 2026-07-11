@@ -3,6 +3,7 @@
 archwngs.py - Archwngs
 
 Run: pip install groq rich ddgs requests openai || pip install -r requirements.txt
+Run : .\venv\Scripts\Activate.ps1
 Run: python archwngs.py
 """
 
