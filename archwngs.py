@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-archwngs.py - Archwngs=
+archwngs.py - Archwngs
 
 Run: pip install groq rich ddgs || pip install -r requirements.txt
 Run: python archwngs.py
