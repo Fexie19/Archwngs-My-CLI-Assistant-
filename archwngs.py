@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-archwngs.py - Archwngs, asisten pribadi CLI-mu (Groq Cloud).
+archwngs.py - Archwngs=
 
-Install: pip install groq rich duckduckgo-search
+Run: pip install groq rich ddgs
 Run: python archwngs.py
 """
 
