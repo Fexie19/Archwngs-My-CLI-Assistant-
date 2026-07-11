@@ -22,7 +22,7 @@ os.system("cls")
 # KONFIGURASI
 API_KEY = ""
 MODEL = ""
-# ============================================================
+
 
 # IMPORTS
 try:
@@ -42,9 +42,9 @@ try:
 except ImportError:
     HAS_DDGS = False
 
-# ============================================================
+
 # INIT
-# ============================================================
+
 if not API_KEY:
     print("ERROR: API_KEY belum diset")
     sys.exit(1)
