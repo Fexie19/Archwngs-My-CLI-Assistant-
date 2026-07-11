@@ -2,7 +2,7 @@
 """
 archwngs.py - Archwngs
 
-Run: pip install groq rich ddgs || pip install -r requirements.txt
+Run: pip install groq rich ddgs requests || pip install -r requirements.txt
 Run: python archwngs.py
 """
 
