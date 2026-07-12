@@ -80,8 +80,8 @@ ATURAN:
 
 FORMAT: * untuk list, 1.2.3 untuk langkah, **bold** untuk penekanan."""
 
-BLOCKED_EXTENSIONS = {".exe", ".bat", ".cmd", ".sh", ".command", ".msi", ".app", ".scr", ".ps1", ".vbs", ".jar", ".dll", ".sys", ".com", ".pif", ".gadget"}
-SKIP_DIR_NAMES = {"Windows", "Program Files", "Program Files (x86)", "ProgramData", "AppData", "$Recycle.Bin", "System Volume Information", "Library", "System", "private", "proc", "sys", "dev", "node_modules", "venv", ".venv", "__pycache__", ".cache", ".git"}
+BLOCKED_EXTENSIONS = {".bat", ".sh", ", ".msi", ".scr", ".ps1", ".vbs", ".jar", ".dll", ".sys", ".com", ".pif", ".gadget"}
+SKIP_DIR_NAMES = {"Windows", "$Recycle.Bin", "System Volume Information", "Library", "System", "private", "proc", "sys", "dev", "node_modules", "venv", ".venv", "__pycache__", ".cache", ".git"}
 
 C_SKIP = "\033[90m"
 C_RESET = "\033[0m"
